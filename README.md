@@ -1,6 +1,4 @@
-# Tarea-1
-
-using System;
+sing System;
 using System.Collections.Generic;
 using System.Linq;
 
