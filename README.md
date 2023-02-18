@@ -1,29 +1,28 @@
 # Tarea-1
 
-Creamos un modelo PrimesModel.cs en la carpeta "Models" y agregar el siguiente código:
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PrimesCalculator.Models
+namespace PrimosCalculadora.Models
 {
-    public class PrimesModel
+    public class PrimosModel
     {
-        public int Number { get; set; }
-        public List<int> Primes { get; set; }
-        public int Result { get; set; }
-        public string Code { get; set; }
+        public int Numero { get; set; } // Propiedad para almacenar el número ingresado por el usuario
+        public List<int> Primos { get; set; } // Propiedad para almacenar la lista de números primos
+        public int Resultado { get; set; } // Propiedad para almacenar la suma de los números primos
+        public string Codigo { get; set; } // Propiedad para almacenar el código único para recuperar el resultado en el futuro
 
-        public PrimesModel()
+        public PrimosModel()
         {
-            Number = 0;
-            Primes = new List<int>();
-            Result = 0;
-            Code = "";
+            Numero = 0;
+            Primos = new List<int>();
+            Resultado = 0;
+            Codigo = "";
         }
 
-        public bool IsPrime(int n)
+        // Función para determinar si un número es primo
+        public bool EsPrimo(int n)
         {
             if (n < 2)
             {
@@ -39,98 +38,43 @@ namespace PrimesCalculator.Models
             return true;
         }
 
-        public List<int> GetPrimes()
+        // Función para obtener la lista de números primos menores o iguales al número ingresado
+        public List<int> ObtenerPrimos()
         {
-            Primes = new List<int>();
-            for (int i = 2; i <= Number; i++)
+            Primos = new List<int>();
+            for (int i = 2; i <= Numero; i++)
             {
-                if (IsPrime(i))
+                if (EsPrimo(i))
                 {
-                    Primes.Add(i);
+                    Primos.Add(i);
                 }
             }
-            return Primes;
+            return Primos;
         }
 
-        public int SumPrimes()
+        // Función para calcular la suma de los números primos
+        public int SumarPrimos()
         {
-            Result = Primes.Sum();
-            return Result;
+            Resultado = Primos.Sum();
+            return Resultado;
         }
 
-        public string SaveResult()
+        // Función para guardar el resultado en un archivo de texto con un código único y devolver el código
+        public string GuardarResultado()
         {
-            Code = Guid.NewGuid().ToString();
-            string filename = Code + ".txt";
-            System.IO.File.WriteAllText(filename, Result.ToString());
-            return Code;
+            Codigo = Guid.NewGuid().ToString(); // Generar un código único
+            string nombreArchivo = Codigo + ".txt"; // Nombre del archivo que contiene el resultado
+            System.IO.File.WriteAllText(nombreArchivo, Resultado.ToString()); // Guardar el resultado en el archivo
+            return Codigo;
         }
 
-        public bool LoadResult(string code)
+        // Función para cargar el resultado previamente guardado utilizando el código único
+        public bool CargarResultado(string codigo)
         {
-            Code = code;
-            string filename = Code + ".txt";
-            if (System.IO.File.Exists(filename))
+            Codigo = codigo; // Almacenar el código
+            string nombreArchivo = Codigo + ".txt"; // Nombre del archivo que contiene el resultado
+            if (System.IO.File.Exists(nombreArchivo)) // Verificar si el archivo existe
             {
-                Result = int.Parse(System.IO.File.ReadAllText(filename));
+                Resultado = int.Parse(System.IO.File.ReadAllText(nombreArchivo)); // Cargar el resultado desde el archivo
                 return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-}
-
-
-Crear un controlador PrimesController.cs en la carpeta "Controllers" y agregar el siguiente código:
-
-
-using Microsoft.AspNetCore.Mvc;
-using PrimesCalculator.Models;
-
-namespace PrimesCalculator.Controllers
-{
-    public class PrimesController : Controller
-    {
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Calculate(PrimesModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                model.GetPrimes();
-                model.SumPrimes();
-                model.SaveResult();
-                return RedirectToAction("Result", new { code = model.Code });
-            }
-            else
-            {
-                return View("Index", model);
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Result(string code)
-        {
-            PrimesModel model = new PrimesModel();
-            if (model.LoadResult(code))
-            {
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("Index");
-            }
-        }
-    }
-}
-``
-
-
+           
